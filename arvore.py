@@ -68,6 +68,42 @@ class Arvore:
                 no_atual = no_atual.direita
         # Valor não existe na árvore
         return False
+
+# Rotação Direita
+
+    def rotacao_direita(self, Z):
+        Y = Z.esquerda
+        if Y is none:
+            # Se não é possível rotacionar
+            return Z
+
+        T3 = Y.direita
+
+        Y.direita = Z
+        Z.esquerda = T3
+
+        # self.atualizar_altura(Z)
+        # self.atualizar_altura(Y)
+
+        return Y
+
+    # Rotação Esquerda
+
+    def rotacao_esquerda(self, Z):
+        Y = Z.direita
+        if Y is none:
+            #Se não é possível rotacionar
+            return Z
+
+        T2 = Y.esquerda
+
+        Y.esquerda = Z
+        Z.direita = T2
+
+        # self.atualizar_altura(Z)
+        # self.atualizar_altura(Y)
+
+        return Y
     
     def obter_altura(self, node):
         if node is None:
