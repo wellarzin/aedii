@@ -1,6 +1,8 @@
 import random
 import time
 
+lista = [10, 5, 15, 3, 1, 20, 25, 18]
+
 
 class Node:
     # método construtor
@@ -8,7 +10,8 @@ class Node:
         self.valor = valor
         self.esquerda = None
         self.direita = None
-        # self.altura = 1
+        self.altura = 1
+
 
 class Arvore:
     def __init__(self):
@@ -68,36 +71,61 @@ class Arvore:
 
 # Rotação Direita
 
-def rotacao_direita(self, Z):
-    Y = Z.esquerda
-    if Y is none:
-        # Se não é possível rotacionar
-        return Z
+    def rotacao_direita(self, Z):
+        Y = Z.esquerda
+        if Y is none:
+            # Se não é possível rotacionar
+            return Z
+
+        T3 = Y.direita
+
+        Y.direita = Z
+        Z.esquerda = T3
+
+        # self.atualizar_altura(Z)
+        # self.atualizar_altura(Y)
+
+        return Y
+
+    # Rotação Esquerda
+
+    def rotacao_esquerda(self, Z):
+        Y = Z.direita
+        if Y is none:
+            #Se não é possível rotacionar
+            return Z
+
+        T2 = Y.esquerda
+
+        Y.esquerda = Z
+        Z.direita = T2
+
+        # self.atualizar_altura(Z)
+        # self.atualizar_altura(Y)
+
+        return Y
     
-    T3 = Y.direita
-
-    Y.direita = Z
-    Z.esquerda = T3
-
-    # self.atualizar_altura(Z)
-    # self.atualizar_altura(Y)
-
-    return Y
-
-# Rotação Esquerda
-
-def rotacao_esquerda(self, Z):
-    Y = Z.direita
-    if Y is none:
-        #Se não é possível rotacionar
-        return Z
-
-    T2 = Y.esquerda
-
-    Y.esquerda = Z
-    Z.direita = T2
-
-    # self.atualizar_altura(Z)
-    # self.atualizar_altura(Y)
-
-    return Y
+    def obter_altura(self, node):
+        if node is None:
+            return 0
+        else: 
+            return node.altura
+        
+    def atualizar_altura(self, node):
+        altura_esquerda = obter_altura(node.esquerda)
+        altura_direita = obter_altura(node.direita)
+        node.altura = 1 + max(altura_esquerda, altura_direita)
+        
+    def obter_balanceamento(self, node):
+        if node is None:
+            return 0
+        
+        resultado = obter_altura(node.esquerda) - obter_altura(node.direita)
+        
+        if resultado > 1:
+            return resultado
+        elif resultado < -1:
+            return resultado
+        else: 
+            return resultado
+    
