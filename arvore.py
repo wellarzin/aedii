@@ -11,6 +11,9 @@ class Node:
         self.esquerda = None
         self.direita = None
         self.altura = 1
+    
+        self.novo = None
+        self.altura = 1
 
 
 class Arvore:
@@ -26,6 +29,40 @@ class Arvore:
 
         # Se existir uma raiz, o nó atual recebe o valor da raiz
         no_atual = self.raiz
+        
+        novo_no = self.novo_no(valor_para_inserir, altura=1)
+        
+        def caminho(no_atual, novo_no):
+            if no_atual is None:
+                self.raiz is None == novo_no
+                return novo_no
+            if novo_no.valor < no_atual.valor:
+                no_atual.esquerda = caminho(no_atual.esquerda, novo_no)
+            elif novo_no.valor > no_atual.valor:
+                no_atual.direita = caminho(no_atual.direita, novo_no)
+            return no_atual
+        
+        caminho(no_atual, novo_no)
+        
+        #iniciar um ponteiro atual na raiz  e adicionar o nó atual à lista caminho
+        no_atual = self.raiz
+
+        while True:
+            no_atual == caminho(no_atual, novo_no)
+            valor_para_inserir = no_atual.valor
+            
+            if no_atual.valor.esquerda is None:
+                novo_no == no_atual.esquerda
+                break
+            elif no_atual.valor.esquerda is not None:
+                no_atual == no_atual.esquerda
+            
+            elif no_atual.valor.direita is None:
+                novo_no == no_atual.direita
+                break
+            elif no_atual.valor.direita is not None:
+                no_atual == no_atual.direita
+
 
         while True:
             # Se valor for menor que atual, olha para a esquerda do no_atual
