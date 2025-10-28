@@ -13,7 +13,30 @@ class Node:
         self.altura = 1
     
         self.novo = None
-        self.altura = 1
+        
+    def obter_altura(self, node):
+        if node is None:
+            return 0
+        else: 
+            return node.altura
+        
+    def atualizar_altura(self, node):
+        altura_esquerda = obter_altura(node.esquerda)
+        altura_direita = obter_altura(node.direita)
+        node.altura = 1 + max(altura_esquerda, altura_direita)
+        
+    def obter_balanceamento(self, node):
+        if node is None:
+            return 0
+        
+        resultado = obter_altura(node.esquerda) - obter_altura(node.direita)
+        
+        if resultado > 1:
+            return resultado
+        elif resultado < -1:
+            return resultado
+        else: 
+            return resultado
 
 
 class Arvore:
@@ -28,27 +51,16 @@ class Arvore:
             return
 
         # Se existir uma raiz, o nó atual recebe o valor da raiz
-        no_atual = self.raiz
         
         novo_no = self.novo_no(valor_para_inserir, altura=1)
         
-        def caminho(no_atual, novo_no):
-            if no_atual is None:
-                self.raiz is None == novo_no
-                return novo_no
-            if novo_no.valor < no_atual.valor:
-                no_atual.esquerda = caminho(no_atual.esquerda, novo_no)
-            elif novo_no.valor > no_atual.valor:
-                no_atual.direita = caminho(no_atual.direita, novo_no)
-            return no_atual
-        
-        caminho(no_atual, novo_no)
-        
+        caminho = []
+
         #iniciar um ponteiro atual na raiz  e adicionar o nó atual à lista caminho
         no_atual = self.raiz
 
         while True:
-            no_atual == caminho(no_atual, novo_no)
+            no_atual == caminho.append(no_atual)
             valor_para_inserir = no_atual.valor
             
             if no_atual.valor.esquerda is None:
@@ -62,29 +74,35 @@ class Arvore:
                 break
             elif no_atual.valor.direita is not None:
                 no_atual == no_atual.direita
-
-
-        while True:
-            # Se valor for menor que atual, olha para a esquerda do no_atual
-            if valor < no_atual.valor:
-                if no_atual.esquerda is None:
-                    no_atual.esquerda = Node(valor)
-                    break
-                else:
-                    no_atual = no_atual.esquerda
-
-            # Se valor for maior que atual, olha para a direita do no_atual
-            elif valor > no_atual.valor:
-                if no_atual.direita is None:
-                    no_atual.direita = Node(valor)
-                    break
-                else:
-                    no_atual = no_atual.direita
-
-            # Se o valor é igual ao atual
-            else:
-                # ignorar
+                
+            else: 
                 break
+            
+            for no_ancestral in reversed(caminho):
+                no_ancestral.atualizar_altura()
+                
+                fator_balanceamento = Node.obter_balanceamento(no_ancestral)
+                if fator_balanceamento > 1:
+                    print(f"Desbalanceamento no node {no_ancestral.valor} (FB: {fator_balanceamento})")
+                    esquerda_ancestral = no_ancestral.esquerda
+                    if valor_para_inserir < esquerda_ancestral.valor:
+                        print(f"Rotação simples à direita")
+                        nova_sub_raiz = Arvore.rotacao_direita(no_ancestral)
+                    else:
+                        Arvore.rotacao_esquerda(esquerda_ancestral)
+                        nova_sub_raiz = Arvore.rotacao_direita(no_ancestral)
+                    self._atualizar_referencia_pai(caminho, no_ancestral, nova_sub_raiz)
+                
+                elif fator_balanceamento < -1:
+                    ancestral_direita = no_ancestral.direita
+                    if valor_para_inserir > ancestral_direita.valor:
+                        print(f"Rotação simples à esquerda")
+                        nova_sub_raiz = Arvore.rotacao_esquerda(no_ancestral)
+                    else: 
+                        Arvore.rotacao_direita(ancestral_direita)
+                        nova_sub_raiz = Arvore.rotacao_esquerda(no_ancestral)
+                    self._atualizar_referencia_pai(caminho, no_ancestral, nova_sub_raiz)
+                                    
 
     def buscar(self, valor):
         no_atual = self.raiz
@@ -128,7 +146,7 @@ class Arvore:
 
     def rotacao_esquerda(self, Z):
         Y = Z.direita
-        if Y is none:
+        if Y is None:
             #Se não é possível rotacionar
             return Z
 
@@ -142,27 +160,69 @@ class Arvore:
 
         return Y
     
-    def obter_altura(self, node):
-        if node is None:
-            return 0
-        else: 
-            return node.altura
+    def imprimir_arvore(self, no=None, prefixo="", is_ultimo=True):
+        if no is None:
+            no = self.raiz
         
-    def atualizar_altura(self, node):
-        altura_esquerda = obter_altura(node.esquerda)
-        altura_direita = obter_altura(node.direita)
-        node.altura = 1 + max(altura_esquerda, altura_direita)
+        if no is not None:
+            print(prefixo + ("└── " if is_ultimo else "├── ") + f"{no.valor} (h:{no.altura}, fb:{Node.obter_fator_balanceamento(no)})")
+            
+            # Preparar prefixo para os filhos
+            novo_prefixo = prefixo + ("    " if is_ultimo else "│   ")
+            
+            # Verificar se tem filhos
+            tem_esquerda = no.esquerda is not None
+            tem_direita = no.direita is not None
+            
+            # Imprimir filho da esquerda primeiro
+            if tem_esquerda:
+                self.imprimir_arvore(no.esquerda, novo_prefixo, not tem_direita)
+            
+            # Imprimir filho da direita
+            if tem_direita:
+                self.imprimir_arvore(no.direita, novo_prefixo, True)
+    
+   
+if __name__ == "__main__":
+    print("=" * 60)
+    print(f"Passo D: ")
+    print("=" * 60)
+    
+    print("\nTESTE 1: caso especial")
+    print("\n" + "="*60)
+    arvore_teste = Arvore()
+    for valor in [1, 2 , 3]:
+        print(f"Inserir:")
+        arvore_teste.inserir(valor)
+    
+    print(f"Resultado:")
+    arvore_teste.imprimir_arvore()
+    
+    print("\n" + "="*60)
+    print("\nTESTE 2: rotação da sub-arvore")
+    print("\n" + "="*60)
+    print("Inserindo sequência: [10, 5, 15, 2, 7, 1]")
+    arvore_teste2 = Arvore()
+    for valor in [10, 5, 15, 2, 7, 1]:
+        print(f"Inserir:")
+        arvore_teste2.inserir(valor)
         
-    def obter_balanceamento(self, node):
-        if node is None:
-            return 0
+    print("\nResultado:")
+    arvore_teste2.imprimir_arvore()
+    
+    print("\n" + "="*60)
+    print("\nTESTE 3: Rotação dupla (LR)")
+    print("Inserindo sequência que força rotação dupla: [10, 5, 7]")
+    arvore3 = Arvore()
+    for valor in [10, 5, 7]:
+        print(f"\nInserindo {valor}:")
+        arvore3.inserir(valor)
         
-        resultado = obter_altura(node.esquerda) - obter_altura(node.direita)
-        
-        if resultado > 1:
-            return resultado
-        elif resultado < -1:
-            return resultado
-        else: 
-            return resultado
+    print("\nResultado")
+    arvore3.imprimir_arvore()
+
+    print("\n" + "="*60)
+    print("Passo D finalizado")
+    print("="*60)
+    
     
