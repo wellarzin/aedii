@@ -1,5 +1,6 @@
 # Participantes: Bruno Wellar e Gustavo Py
 import statistics
+import unicodedata
 
 nomes = [
     "João", "João Silva","Ana Clara", "Ana Cláudia",
@@ -21,6 +22,26 @@ class HashTable():
     #e o indice já estiver ocupado, aumenta
     self.colisoes = 0
 
+  def _normalizar_chave(self, key: str) -> str:
+    """
+    Normaliza a chave removendo espaços, acentos e convertendo para minúscula.
+    """
+    #remove os espaços da chave
+    sem_espacos = key.replace(" ", "")
+    
+    #converte tudo para minúscula
+    minuscula = sem_espacos.lower()
+    
+    #remove os acentos utilizando normalização unicode
+    #NFD separa os caracteres base dos acentos
+    nfd = unicodedata.normalize('NFD', minuscula)
+    
+    #filtra apenas os caracteres que não são marcas diacríticas (acentos)
+    #categoria 'Mn' = Nonspacing Mark (acentos, til, cedilha, etc)
+    sem_acentos = ''.join(char for char in nfd if unicodedata.category(char) != 'Mn')
+    
+    return sem_acentos
+
   def _hash(self, key: str) -> int:
     #primeiro, como funciona a nossa hash?
     #vamos ignorar os espaços e acentos, converter tudo para minusculo
@@ -29,8 +50,9 @@ class HashTable():
 
     n_primo = 17
     
-    #trata a "Key" pra não ter diferença entre "Gabriel" e " gabriel"
-    chave_tratada = str(key.replace(" ","").lower())
+    #trata a "Key" pra não ter diferença entre "Gabriel", " gabriel" e "Gabriél"
+    #agora usando a função de normalização que remove acentos também
+    chave_tratada = self._normalizar_chave(key)
     
     #calculamos o valor do hash 
     valor_hash = 0
